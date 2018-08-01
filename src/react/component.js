@@ -9,7 +9,6 @@ class Component {
 
   setState( stateChange ) {
     Object.assign( this.state, stateChange );
-    console.log('this:', this)
     renderComponent( this );
   }
 }

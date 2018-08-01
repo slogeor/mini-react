@@ -1,8 +1,8 @@
 {
   "presets": ["env"],
   "plugins": [
-      ["transform-react-jsx", {
-          "pragma": "React.createElement"
-      }]
+    ["transform-react-jsx", {
+      "pragma": "React.createElement"
+    }]
   ]
 }

@@ -1,4 +1,4 @@
-import Component  from '../react/component';
+import Component from '../react/component';
 import { setAttribute } from './dom';
 
 /**
@@ -9,25 +9,16 @@ import { setAttribute } from './dom';
  * @returns {HTMLElement} 更新后的DOM
  */
 export function diff( dom, vnode, container ) {
+  console.log('diff dom:', dom);
+  console.log('diff vnode:', vnode);
+  console.log('diff container:', container);
+  // 返回 dom 节点
   const ret = diffNode( dom, vnode );
 
   if ( container && ret.parentNode !== container ) {
     container.appendChild( ret );
   }
   return ret;
-}
-
-// 判断是不是同一个节点
-function isSameNodeType( dom, vnode ) {
-  if ( typeof vnode === 'string' || typeof vnode === 'number' ) {
-    return dom.nodeType === 3;
-  }
-
-  if ( typeof vnode.tag === 'string' ) {
-    return dom.nodeName.toLowerCase() === vnode.tag.toLowerCase();
-  }
-
-  return dom && dom._component && dom._component.constructor === vnode.tag;
 }
 
 // diff node
@@ -80,6 +71,19 @@ function diffNode( dom, vnode ) {
   // 对比属性
   diffAttributes( out, vnode );
   return out;
+}
+
+// 判断是不是同一个节点
+function isSameNodeType( dom, vnode ) {
+  if ( typeof vnode === 'string' || typeof vnode === 'number' ) {
+    return dom.nodeType === 3;
+  }
+
+  if ( typeof vnode.tag === 'string' ) {
+    return dom.nodeName.toLowerCase() === vnode.tag.toLowerCase();
+  }
+
+  return dom && dom._component && dom._component.constructor === vnode.tag;
 }
 
 // 对比子节点
@@ -216,57 +220,48 @@ function removeNode( dom ) {
   }
 }
 
+// 创建组件
 function createComponent( component, props ) {
-
   let inst;
-
   if ( component.prototype && component.prototype.render ) {
-      inst = new component( props );
+    inst = new component( props );
   } else {
-      inst = new Component( props );
-      inst.constructor = component;
-      inst.render = function() {
-          return this.constructor( props );
-      }
+    inst = new Component( props );
+    inst.constructor = component;
+    inst.render = function() {
+      return this.constructor( props );
+    }
   }
-
   return inst;
-
 }
+
+// 更新组件的 props
 function setComponentProps( component, props ) {
   // if ( !component.base ) {
   //   if ( component.componentWillMount ) component.componentWillMount();
   // } else if ( component.componentWillReceiveProps ) {
   //   component.componentWillReceiveProps( props );
   // }
-
   component.props = props;
   renderComponent( component );
 }
 
+// 组件渲染
 export function renderComponent( component ) {
-
   let base;
-
   const renderer = component.render();
-
-  if ( component.base && component.componentWillUpdate ) {
-      component.componentWillUpdate();
-  }
+  // if ( component.base && component.componentWillUpdate ) {
+  //     component.componentWillUpdate();
+  // }
 
   base = diffNode( component.base, renderer );
 
   component.base = base;
   base._component = component;
 
-  if ( component.base ) {
-      if ( component.componentDidUpdate ) component.componentDidUpdate();
-  } else if ( component.componentDidMount ) {
-      component.componentDidMount();
-  }
-
-  component.base = base;
-  base._component = component;
-
+  // if ( component.base ) {
+  //     if ( component.componentDidUpdate ) component.componentDidUpdate();
+  // } else if ( component.componentDidMount ) {
+  //     component.componentDidMount();
+  // }
 }
-

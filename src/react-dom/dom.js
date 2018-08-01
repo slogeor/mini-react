@@ -1,3 +1,4 @@
+// 设置属性
 export function setAttribute( dom, name, value ) {
   // 如果属性名是class，则改回className
   if ( name === 'className' ) name = 'class';
